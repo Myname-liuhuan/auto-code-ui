@@ -2,47 +2,25 @@
 import { ref } from 'vue'
 import DataSourceSelector from '@/components/DataSourceSelector.vue'
 import TableFields from '@/components/TableFields.vue'
+import { generateCode } from '@/services/api'
 
-const fields = ref([])
+import type { Field } from '@/types'
+
+const fields = ref<Field[]>([])
 const selectedTable = ref('')
 
-const handleTableSelect = (table: string, tableFields: any[]) => {
+const handleTableSelect = (table: string, tableFields: Field[]) => {
   selectedTable.value = table
   fields.value = tableFields
 }
 
 const handleGenerate = async () => {
   try {
-    // TODO: 替换为实际API调用
-    const response = await fetch('/api/generate', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        table: selectedTable.value,
-        fields: fields.value
-      })
-    })
-
-    if (!response.ok) {
-      throw new Error('代码生成失败')
-    }
-
-    const blob = await response.blob()
-    const url = window.URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `${selectedTable.value}_code.zip`
-    document.body.appendChild(a)
-    a.click()
-    window.URL.revokeObjectURL(url)
-    a.remove()
-
+    await generateCode(selectedTable.value, fields.value)
     alert('代码生成成功！')
   } catch (error) {
     console.error('生成错误:', error)
-    alert('代码生成失败: ' + error.message)
+    alert('代码生成失败: ' + (error as Error).message)
   }
 }
 </script>
