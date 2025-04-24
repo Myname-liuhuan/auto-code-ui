@@ -20,6 +20,7 @@ export default defineConfig({
     exclude: ['vite-plugin-vue-devtools']
   },
   server: {
+    host:'0.0.0.0',
     port: AppConfig.port,
     proxy: {
       '/api': {
