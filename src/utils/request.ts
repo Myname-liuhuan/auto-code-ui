@@ -5,7 +5,9 @@ import axios, { type AxiosRequestConfig, type AxiosResponse } from 'axios';
 const isDev = import.meta.env.MODE === 'development';
 
 const instance = axios.create({
-  baseURL: isDev ? '/api' : 'https://api.xxx.com',
+  baseURL: import.meta.env.MODE === 'development'
+    ? 'http://127.0.0.1:8089'
+    : 'https://api.xxx.com',
   timeout: 10000,
   withCredentials: true,
 });

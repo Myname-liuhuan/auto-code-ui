@@ -7,7 +7,7 @@ export interface CommonResult {
   data: JSON;
 }
 
-// 调用接口：获取用户信息
+// 获取数据源列表
 export const listDataSource = () => {
   return request<CommonResult>({
     url: '/codegenDataSource/listDataSource',
