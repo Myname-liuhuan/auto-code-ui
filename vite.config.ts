@@ -1,4 +1,5 @@
 import { fileURLToPath, URL } from 'node:url'
+import { AppConfig } from './src/config'
 
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
@@ -19,6 +20,13 @@ export default defineConfig({
     exclude: ['vite-plugin-vue-devtools']
   },
   server: {
-    port: 9010
+    port: AppConfig.devPort,
+    proxy: {
+      '/api': {
+        target: AppConfig.targetUrl,
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      }
+    }
   }
 })
