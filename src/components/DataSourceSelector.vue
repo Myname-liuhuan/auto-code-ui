@@ -1,17 +1,15 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { listDataSource } from '@/apis/GenCode'
+import type { DataSourceItem } from '@/types/codegen';
 
-const dataSources = ref<Array<{id: number, name: string}>>([])
+const dataSourceList = ref<DataSourceItem[]>([]);
 
 onMounted(async () => {
   try {
     const res = await listDataSource()
     if (res.code === 200 && Array.isArray(res.data)) {
-      dataSources.value = res.data.map((item: any) => ({
-        id: item.id,
-        name: item.name
-      }))
+      dataSourceList.value = res.data;
     }
   } catch (error) {
     console.error('获取数据源失败:', error)
@@ -65,7 +63,7 @@ const fetchTableFields = async () => {
       <label>数据源:</label>
       <select v-model="selectedSource" @change="fetchDatabases">
         <option disabled value="">请选择数据源</option>
-        <option v-for="source in dataSources" :key="source.id" :value="source.id">
+        <option v-for="source in dataSourceList" :key="source.id" :value="source.id">
           {{ source.name }}
         </option>
       </select>

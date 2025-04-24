@@ -1,17 +1,13 @@
 import request from '@/utils/request';
+import type { CommonResult } from '@/types/common';
+import type { DataSourceItem } from '@/types/codegen';
 
-// 返回的字段结构
-export interface CommonResult {
-  code: number;
-  message: string;
-  data: JSON;
-}
 
 // 获取数据源列表
 export const listDataSource = () => {
-  return request<CommonResult>({
+  return request<CommonResult<DataSourceItem[]>>({
     url: '/api/codegenDataSource/listDataSource',
-    method: 'GET'
+    method: 'GET',
   });
 };
 
