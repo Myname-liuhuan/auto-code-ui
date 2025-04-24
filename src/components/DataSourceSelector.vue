@@ -102,7 +102,12 @@ const fetchTableFields = async () => {
 .selector-item {
   display: flex;
   align-items: center;
-  gap: 10px;
+}
+.selector-item label {
+  min-width: 80px;
+  text-align: right;
+  white-space: nowrap;
+  margin-right: 10px;
 }
 select {
   padding: 8px;

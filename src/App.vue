@@ -7,7 +7,6 @@ import TableFields from '@/components/TableFields.vue'
   <div class="app-container">
     <h1>数据库代码生成器</h1>
     <DataSourceSelector />
-    <TableFields />
   </div>
 </template>
 
