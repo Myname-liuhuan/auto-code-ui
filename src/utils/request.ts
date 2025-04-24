@@ -6,7 +6,13 @@ import { AppConfig } from '@/config';
 const isDev = import.meta.env.MODE === 'development';
 
 const instance = axios.create({
+<<<<<<< HEAD
   baseURL: AppConfig.host + ':' + AppConfig.port,
+=======
+  baseURL: import.meta.env.MODE === 'development'
+    ? AppConfig.devServerUrl
+    : AppConfig.apiBaseUrl,
+>>>>>>> c7cfedbb211c9d4fdda2563dd4c6e79e6ee864f4
   timeout: 10000,
   withCredentials: true,
 });
