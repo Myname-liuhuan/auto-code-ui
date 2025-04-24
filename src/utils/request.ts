@@ -3,7 +3,7 @@ import axios, { type AxiosRequestConfig, type AxiosResponse } from 'axios';
 import { AppConfig } from '@/config';
 
 const instance = axios.create({
-  baseURL: '127.0.0.1:' + AppConfig.port,
+  baseURL: 'http://localhost:' + AppConfig.port,
   timeout: 10000,
   withCredentials: true,
 });
