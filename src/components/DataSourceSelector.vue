@@ -1,10 +1,22 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { listDataSource } from '@/apis/GenCode'
 
-const dataSources = ref([
-  { id: 1, name: 'MySQL' },
-  { id: 2, name: 'PostgreSQL' }
-])
+const dataSources = ref<Array<{id: number, name: string}>>([])
+
+onMounted(async () => {
+  try {
+    const res = await listDataSource()
+    if (res.code === 200 && Array.isArray(res.data)) {
+      dataSources.value = res.data.map((item: any) => ({
+        id: item.id,
+        name: item.name
+      }))
+    }
+  } catch (error) {
+    console.error('获取数据源失败:', error)
+  }
+})
 
 const databases = ref<Array<{id: number, name: string}>>([])
 const tables = ref<Array<{id: number, name: string}>>([])
