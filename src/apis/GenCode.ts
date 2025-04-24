@@ -10,7 +10,7 @@ export interface CommonResult {
 // 获取数据源列表
 export const listDataSource = () => {
   return request<CommonResult>({
-    url: '/codegenDataSource/listDataSource',
+    url: '/api/codegenDataSource/listDataSource',
     method: 'GET'
   });
 };

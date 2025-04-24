@@ -1,13 +1,12 @@
 // src/utils/request.ts
 import axios, { type AxiosRequestConfig, type AxiosResponse } from 'axios';
+import { AppConfig } from '@/config';
 // import { message } from 'antd'; // 全局提示用的，也可以换成ElMessage之类的
 
 const isDev = import.meta.env.MODE === 'development';
 
 const instance = axios.create({
-  baseURL: import.meta.env.MODE === 'development'
-    ? 'http://127.0.0.1:8089'
-    : 'https://api.xxx.com',
+  baseURL: AppConfig.host + ':' + AppConfig.port,
   timeout: 10000,
   withCredentials: true,
 });
