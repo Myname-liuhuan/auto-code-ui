@@ -7,10 +7,8 @@ const dataSourceList = ref<DataSourceItem[]>([]);
 
 onMounted(async () => {
   try {
-    const res = await listDataSource()
-    if (res.code === 200 && Array.isArray(res.data)) {
-      dataSourceList.value = res.data;
-    }
+    let data = await listDataSource()
+    dataSourceList.value = data;
   } catch (error) {
     console.error('获取数据源失败:', error)
   }

@@ -33,8 +33,8 @@ instance.interceptors.request.use(
 instance.interceptors.response.use(
   (response: AxiosResponse) => {
     const res = response.data;
-    if (res.code !== 0) {
-      return Promise.reject(res.msg || 'Error');
+    if (res.code !== 200) {
+      return Promise.reject(res.message || 'Error');
     }
     return res.data;
   },
