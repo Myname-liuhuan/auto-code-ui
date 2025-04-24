@@ -2,7 +2,6 @@
 import { ref } from 'vue'
 import DataSourceSelector from '@/components/DataSourceSelector.vue'
 import TableFields from '@/components/TableFields.vue'
-import { generateCode } from '@/services/api'
 
 import type { Field } from '@/types'
 
@@ -16,7 +15,7 @@ const handleTableSelect = (table: string, tableFields: Field[]) => {
 
 const handleGenerate = async () => {
   try {
-    await generateCode(selectedTable.value, fields.value)
+    // await generateCode(selectedTable.value, fields.value)
     alert('代码生成成功！')
   } catch (error) {
     console.error('生成错误:', error)
