@@ -67,8 +67,13 @@ const fetchTableFields = async () => {
   <div class="selector-container">
     <div class="selector-item">
       <label>数据源:</label>
+<<<<<<< HEAD
       <select v-model="selectedSource" @change="fetchDatabases">
         <option value="" >请选择数据源</option>
+=======
+      <select  @change="(e) => fetchDatabases((e.target as HTMLSelectElement).value)">
+        <option disabled value="">请选择数据源</option>
+>>>>>>> 6213fd2a7d732f52349eeb08058a330ca4db906d
         <option v-for="source in dataSourceList" :key="source.id" :value="source.id">
           {{ source.name }}
         </option>
@@ -78,7 +83,11 @@ const fetchTableFields = async () => {
     <div class="selector-item">
       <label>数据库:</label>
       <select v-model="selectedDB" :disabled="!selectedSource" @change="fetchTables">
+<<<<<<< HEAD
         <option value="">请选择数据库</option>
+=======
+        <option disabled value="">请选择数据库</option>
+>>>>>>> 6213fd2a7d732f52349eeb08058a330ca4db906d
         <option v-for="db in databases" :key="db.value" :value="db.value">
           {{ db.label }}
         </option>
