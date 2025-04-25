@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { listDataSource, listDataBase } from '@/apis/GenCode'
+import { listDataSource, listDataBase, listTable } from '@/apis/GenCode'
 import type { DataSourceItem } from '@/types/codegen';
 import type { CommonSelectItem } from '@/types/common';
 
@@ -18,9 +18,9 @@ onMounted(async () => {
 const databases = ref<CommonSelectItem[]>([])
 const tables = ref<CommonSelectItem[]>([])
 
-const selectedSource = ref<string>()
-const selectedDB = ref<number>()
-const selectedTable = ref<number>()
+const selectedSource = ref<string>('')
+const selectedDB = ref<string>()
+const selectedTable = ref<string>()
 
 //datasourceChange事件
 const fetchDatabases = async () => {
@@ -39,12 +39,18 @@ const fetchDatabases = async () => {
 
 const emit = defineEmits(['table-selected'])
 
+//databaseChange事件
 const fetchTables = async () => {
-  // TODO: 调用API获取表列表
-  tables.value = [
-    { label: '1', value: 'users' },
-    { label: '2', value: 'products' }
-  ]
+  //调用API获取表列表
+  if (!selectedDB.value) {
+    tables.value = []
+  } else {
+    let data = await listTable(selectedSource.value, selectedDB.value)
+    tables.value = data.map((item: string) => ({
+      label: item,
+      value: item
+    }))
+  }
 }
 
 const fetchTableFields = async () => {
@@ -67,13 +73,8 @@ const fetchTableFields = async () => {
   <div class="selector-container">
     <div class="selector-item">
       <label>数据源:</label>
-<<<<<<< HEAD
       <select v-model="selectedSource" @change="fetchDatabases">
         <option value="" >请选择数据源</option>
-=======
-      <select  @change="(e) => fetchDatabases((e.target as HTMLSelectElement).value)">
-        <option disabled value="">请选择数据源</option>
->>>>>>> 6213fd2a7d732f52349eeb08058a330ca4db906d
         <option v-for="source in dataSourceList" :key="source.id" :value="source.id">
           {{ source.name }}
         </option>
@@ -83,11 +84,7 @@ const fetchTableFields = async () => {
     <div class="selector-item">
       <label>数据库:</label>
       <select v-model="selectedDB" :disabled="!selectedSource" @change="fetchTables">
-<<<<<<< HEAD
         <option value="">请选择数据库</option>
-=======
-        <option disabled value="">请选择数据库</option>
->>>>>>> 6213fd2a7d732f52349eeb08058a330ca4db906d
         <option v-for="db in databases" :key="db.value" :value="db.value">
           {{ db.label }}
         </option>
@@ -101,7 +98,7 @@ const fetchTableFields = async () => {
         :disabled="!selectedDB"
         @change="fetchTableFields"
       >
-        <option disabled value="">请选择数据表</option>
+        <option value="">请选择数据表</option>
         <option v-for="table in tables" :key="table.value" :value="table.value">
           {{ table.label }}
         </option>

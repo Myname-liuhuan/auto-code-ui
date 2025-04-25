@@ -18,3 +18,13 @@ export const listDataBase = (dataSourceId: string) => {
     params: { dataSourceId }
   });
 };
+
+
+//获取数据库中表列表
+export const listTable = (dataSourceId: string, database: string) => {
+  return request<string[]>({
+    url: '/api/codegenDataSource/listTable',
+    method: 'GET',
+    params: { dataSourceId , database}
+  });
+};
