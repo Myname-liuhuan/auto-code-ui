@@ -19,14 +19,16 @@ const databases = ref<CommonSelectItem[]>([])
 const tables = ref<CommonSelectItem[]>([])
 
 const selectedSource = ref<string>('')
-const selectedDB = ref<string>()
-const selectedTable = ref<string>()
+const selectedDB = ref<string>('')
+const selectedTable = ref<string>('')
 
 //datasourceChange事件
 const fetchDatabases = async () => {
   if (!selectedSource.value){
     databases.value = []
     tables.value = []
+    selectedDB.value = ''
+    selectedTable.value = ''
   }else{
     //调用API获取数据库列表
     let data = await listDataBase(selectedSource.value)
@@ -44,6 +46,7 @@ const fetchTables = async () => {
   //调用API获取表列表
   if (!selectedDB.value) {
     tables.value = []
+    selectedTable.value = ''
   } else {
     let data = await listTable(selectedSource.value, selectedDB.value)
     tables.value = data.map((item: string) => ({
