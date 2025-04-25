@@ -1,6 +1,6 @@
 //代码生成模块类型
 export interface DataSourceItem {
-  id: number;
+  id: string;
   createTime: string;
   updateTime: string;
   name: string;

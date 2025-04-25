@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { listDataSource } from '@/apis/GenCode'
+import { listDataSource, listDataBase } from '@/apis/GenCode'
 import type { DataSourceItem } from '@/types/codegen';
+import type { CommonSelectItem } from '@/types/common';
 
 const dataSourceList = ref<DataSourceItem[]>([]);
 
@@ -14,19 +15,20 @@ onMounted(async () => {
   }
 })
 
-const databases = ref<Array<{id: number, name: string}>>([])
-const tables = ref<Array<{id: number, name: string}>>([])
+const databases = ref<CommonSelectItem[]>([])
+const tables = ref<CommonSelectItem[]>([])
 
-const selectedSource = ref<number>()
+const selectedSource = ref<string>()
 const selectedDB = ref<number>()
 const selectedTable = ref<number>()
 
-const fetchDatabases = async () => {
-  // TODO: 调用API获取数据库列表
-  databases.value = [
-    { id: 1, name: 'db1' },
-    { id: 2, name: 'db2' }
-  ]
+const fetchDatabases = async (value: string) => {
+  //调用API获取数据库列表
+  let data = await listDataBase(value)
+  databases.value = data.map((item: string) => ({
+    label: item,
+    value: item
+  }))
 }
 
 const emit = defineEmits(['table-selected'])
@@ -34,8 +36,8 @@ const emit = defineEmits(['table-selected'])
 const fetchTables = async () => {
   // TODO: 调用API获取表列表
   tables.value = [
-    { id: 1, name: 'users' },
-    { id: 2, name: 'products' }
+    { label: '1', value: 'users' },
+    { label: '2', value: 'products' }
   ]
 }
 
@@ -50,7 +52,7 @@ const fetchTableFields = async () => {
     { id: 3, name: 'created_at', type: 'datetime', entityType: 'Date', isEntityField: false }
   ]
 
-  const selectedTableName = tables.value.find(t => t.id === selectedTable.value)?.name || ''
+  const selectedTableName = tables.value.find(t => t.value === selectedTable.value)?.label || ''
   emit('table-selected', selectedTableName, mockFields)
 }
 </script>
@@ -59,7 +61,7 @@ const fetchTableFields = async () => {
   <div class="selector-container">
     <div class="selector-item">
       <label>数据源:</label>
-      <select v-model="selectedSource" @change="fetchDatabases">
+      <select  @change="(e) => fetchDatabases((e.target as HTMLSelectElement).value)">
         <option disabled value="">请选择数据源</option>
         <option v-for="source in dataSourceList" :key="source.id" :value="source.id">
           {{ source.name }}
@@ -71,8 +73,8 @@ const fetchTableFields = async () => {
       <label>数据库:</label>
       <select v-model="selectedDB" :disabled="!selectedSource" @change="fetchTables">
         <option disabled value="">请选择数据库</option>
-        <option v-for="db in databases" :key="db.id" :value="db.id">
-          {{ db.name }}
+        <option v-for="db in databases" :key="db.value" :value="db.value">
+          {{ db.label }}
         </option>
       </select>
     </div>
@@ -85,8 +87,8 @@ const fetchTableFields = async () => {
         @change="fetchTableFields"
       >
         <option disabled value="">请选择数据表</option>
-        <option v-for="table in tables" :key="table.id" :value="table.id">
-          {{ table.name }}
+        <option v-for="table in tables" :key="table.value" :value="table.value">
+          {{ table.label }}
         </option>
       </select>
     </div>
