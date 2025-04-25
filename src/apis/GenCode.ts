@@ -10,16 +10,11 @@ export const listDataSource = () => {
   });
 };
 
-// 登录接口
-export interface LoginParams {
-  username: string;
-  password: string;
-}
-
-export const login = (data: LoginParams) => {
-  return request<{ token: string }>({
-    url: '/user/login',
-    method: 'POST',
-    data
+//获取数据库列表
+export const listDataBase = (dataSourceId: string) => {
+  return request<string[]>({
+    url: '/api/codegenDataSource/listDataBase',
+    method: 'GET',
+    params: { dataSourceId }
   });
 };
