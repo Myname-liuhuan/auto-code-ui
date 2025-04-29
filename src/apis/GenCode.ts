@@ -1,5 +1,5 @@
 import request from '@/utils/request';
-import type { DataSourceItem } from '@/types/codegen';
+import type { DataSourceItem, TableColumn } from '@/types/codegen';
 
 
 // 获取数据源列表
@@ -26,5 +26,14 @@ export const listTable = (dataSourceId: string, database: string) => {
     url: '/api/codegenDataSource/listTable',
     method: 'GET',
     params: { dataSourceId , database}
+  });
+};
+
+//获取表的所有行
+export const listColumns = (dataSourceId: string, database: string, tableName :string) => {
+  return request<TableColumn[]>({
+    url: '/api/codegenDataSource/listColumns',
+    method: 'GET',
+    params: { dataSourceId , database, tableName}
   });
 };

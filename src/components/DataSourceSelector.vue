@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { listDataSource, listDataBase, listTable } from '@/apis/GenCode'
+import { listDataSource, listDataBase, listTable, listColumns } from '@/apis/GenCode'
 import type { DataSourceItem } from '@/types/codegen';
 import type { CommonSelectItem } from '@/types/common';
 
@@ -55,9 +55,13 @@ const fetchTables = async () => {
     }))
   }
 }
-
+//tableChange事件
 const fetchTableFields = async () => {
   if (!selectedTable.value) return
+
+  let data = await listColumns(selectedSource.value, selectedDB.value, selectedTable.value);
+
+
 
   // TODO: 调用API获取表字段
   // 模拟数据

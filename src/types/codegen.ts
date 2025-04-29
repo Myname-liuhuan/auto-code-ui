@@ -12,3 +12,10 @@ export interface DataSourceItem {
   schemaName: string | null;
   status: boolean;
 }
+
+/** 表的列属性 */
+export interface TableColumn {
+  columnName: string;
+  columnType: string;
+  columnComment: string;
+}
