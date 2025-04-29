@@ -1,9 +1,8 @@
 // src/utils/request.ts
 import axios, { type AxiosRequestConfig, type AxiosResponse } from 'axios';
-import { AppConfig } from '@/config';
 
 const instance = axios.create({
-  baseURL: 'http://localhost:' + AppConfig.port,
+  baseURL: `${window.location.protocol}//${window.location.host}`,
   timeout: 10000,
   withCredentials: true,
 });
