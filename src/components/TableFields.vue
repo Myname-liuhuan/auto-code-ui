@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 
 interface Field {
   id: number
@@ -36,7 +35,7 @@ const updateField = (index: number, field: Partial<Field>) => {
           <th>是否实体类字段</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody v-if="props.fields && props.fields.length > 0">
         <tr v-for="(field, index) in props.fields" :key="field.id">
           <td>{{ index + 1 }}</td>
           <td>{{ field.name }}</td>
@@ -45,7 +44,7 @@ const updateField = (index: number, field: Partial<Field>) => {
           <td>
             <select
               :value="field.isEntityField"
-              @change="e => updateField(index, { isEntityField: e.target.value === 'true' })"
+              @change="(e: Event) => updateField(index, { isEntityField: (e.target as HTMLSelectElement).value === 'true' })"
             >
               <option :value="true">是</option>
               <option :value="false">否</option>
