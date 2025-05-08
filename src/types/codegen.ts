@@ -17,5 +17,6 @@ export interface DataSourceItem {
 export interface TableColumn {
   columnName: string;
   columnType: string;
+  entityType: string;
   columnComment: string;
 }

@@ -64,7 +64,7 @@ const fetchTableFields = async () => {
     id: index,
     name: item.columnName,
     type: item.columnType,
-    entityType: "String",
+    entityType: item.entityType,
     isEntityField: true
   }))
 
