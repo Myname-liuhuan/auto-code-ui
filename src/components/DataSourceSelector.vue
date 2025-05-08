@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { listDataSource, listDataBase, listTable, listColumns } from '@/apis/GenCode'
-import type { DataSourceItem } from '@/types/codegen';
+import type { DataSourceItem, TableColumn } from '@/types/codegen';
 import type { CommonSelectItem } from '@/types/common';
 
 const dataSourceList = ref<DataSourceItem[]>([]);
@@ -59,20 +59,17 @@ const fetchTables = async () => {
 const fetchTableFields = async () => {
   if (!selectedTable.value) return
 
-  let data = await listColumns(selectedSource.value, selectedDB.value, selectedTable.value);
-
-
-
-  // TODO: 调用API获取表字段
-  // 模拟数据
-  const mockFields = [
-    { id: 1, name: 'id', type: 'int', entityType: 'Long', isEntityField: true },
-    { id: 2, name: 'username', type: 'varchar', entityType: 'String', isEntityField: true },
-    { id: 3, name: 'created_at', type: 'datetime', entityType: 'Date', isEntityField: false }
-  ]
+  const data = await listColumns(selectedSource.value, selectedDB.value, selectedTable.value);
+  let fields = data.map((item: TableColumn, index: number) => ({
+    id: index,
+    name: item.columnName,
+    type: item.columnType,
+    entityType: "String",
+    isEntityField: true
+  }))
 
   const selectedTableName = tables.value.find(t => t.value === selectedTable.value)?.label || ''
-  emit('table-selected', selectedTableName, mockFields)
+  emit('table-selected', selectedTableName, fields)
 }
 </script>
 
