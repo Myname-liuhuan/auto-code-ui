@@ -10,12 +10,20 @@ const handleTableSelected = (tableName: string, tableFields: any[]) => {
   selectedTableName.value = tableName
   fields.value = tableFields
 }
+
+const handleClearTable = () => {
+  selectedTableName.value = ''
+  fields.value = []
+}
 </script>
 
 <template>
   <div class="app-container">
     <h1>数据库代码生成器</h1>
-    <DataSourceSelector @table-selected="handleTableSelected" />
+    <DataSourceSelector
+      @table-selected="handleTableSelected"
+      @clear-table="handleClearTable"
+    />
     <TableFields :fields="fields" />
   </div>
 </template>

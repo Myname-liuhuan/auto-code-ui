@@ -37,9 +37,10 @@ const fetchDatabases = async () => {
       value: item
     }))
   }
+  emit('clear-table')
 }
 
-const emit = defineEmits(['table-selected'])
+const emit = defineEmits(['table-selected', 'clear-table'])
 
 //databaseChange事件
 const fetchTables = async () => {
@@ -54,6 +55,7 @@ const fetchTables = async () => {
       value: item
     }))
   }
+  emit('clear-table')
 }
 //tableChange事件
 const fetchTableFields = async () => {
