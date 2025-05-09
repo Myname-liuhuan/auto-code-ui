@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+
+const codePackagePath = ref<string>('')
 import { listDataSource, listDataBase, listTable, listColumns } from '@/apis/GenCode'
 import type { DataSourceItem, TableColumn } from '@/types/codegen';
 import type { CommonSelectItem } from '@/types/common';
@@ -76,6 +78,10 @@ const fetchTableFields = async () => {
 </script>
 
 <template>
+  <div class="path-input">
+    <label>要生成的包路径:</label>
+    <input v-model="codePackagePath" placeholder="请输入代码包路径" />
+  </div>
   <div class="selector-container">
     <div class="selector-item">
       <label>数据源:</label>
@@ -114,6 +120,21 @@ const fetchTableFields = async () => {
 </template>
 
 <style scoped>
+.path-input {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+.path-input label {
+  min-width: 120px;
+  text-align: right;
+  white-space: nowrap;
+  margin-right: 10px;
+}
+.path-input input {
+  padding: 8px;
+  min-width: 300px;
+}
 .selector-container {
   display: flex;
   gap: 20px;
