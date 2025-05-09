@@ -119,7 +119,7 @@ const generateCode = async () => {
 <template>
   <div class="path-input">
     <label>要生成的包路径:</label>
-    <input v-model="codePackagePath" placeholder="请输入代码包路径" />
+    <input v-model="codePackagePath" placeholder="请输入包路径eg:com.example.order" />
   </div>
   <div class="action-buttons">
     <button @click="generateCode" :disabled="!selectedTable">生成代码</button>
