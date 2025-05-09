@@ -1,5 +1,5 @@
 import request from '@/utils/request';
-import type { DataSourceItem, TableColumn } from '@/types/codegen';
+import type { CodeGenerateDTO, DataSourceItem, TableColumn } from '@/types/codegen';
 
 
 // 获取数据源列表
@@ -19,7 +19,6 @@ export const listDataBase = (dataSourceId: string) => {
   });
 };
 
-
 //获取数据库中表列表
 export const listTable = (dataSourceId: string, database: string) => {
   return request<string[]>({
@@ -35,5 +34,15 @@ export const listColumns = (dataSourceId: string, database: string, tableName :s
     url: '/api/codegenDataSource/listColumns',
     method: 'GET',
     params: { dataSourceId , database, tableName}
+  });
+};
+
+//下载文件
+export const generateCodeByConfig = (data: CodeGenerateDTO) => {
+  return request({
+    url: '/api/codegen/generateCodeByConfig',
+    method: 'POST',
+    data,
+    responseType: 'blob', // 设置响应类型为 blob
   });
 };

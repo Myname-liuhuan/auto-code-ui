@@ -20,3 +20,20 @@ export interface TableColumn {
   entityType: string;
   columnComment: string;
 }
+
+/** 表字段生成配置 DTO（用于请求参数） */
+export interface CodeGenColumnSettingDTO {
+  columnName: string;
+  columnType?: string;
+  entityType: string;
+  isEntityField?: boolean;
+}
+
+/** 整体代码生成配置 DTO */
+export interface CodeGenerateDTO {
+  dataSourceId: string;
+  dbName: string;
+  tableName: string;
+  packageName: string;
+  columnSettingList: CodeGenColumnSettingDTO[];
+}

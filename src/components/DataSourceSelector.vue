@@ -2,8 +2,8 @@
 import { ref, onMounted } from 'vue'
 
 const codePackagePath = ref<string>('')
-import { listDataSource, listDataBase, listTable, listColumns } from '@/apis/GenCode'
-import type { DataSourceItem, TableColumn } from '@/types/codegen';
+import { listDataSource, listDataBase, listTable, listColumns, generateCodeByConfig } from '@/apis/GenCode'
+import type { DataSourceItem, TableColumn, CodeGenerateDTO } from '@/types/codegen';
 import type { CommonSelectItem } from '@/types/common';
 
 const dataSourceList = ref<DataSourceItem[]>([]);
@@ -64,16 +64,55 @@ const fetchTableFields = async () => {
   if (!selectedTable.value) return
 
   const data = await listColumns(selectedSource.value, selectedDB.value, selectedTable.value);
-  let fields = data.map((item: TableColumn, index: number) => ({
+  fields.value = data.map((item: TableColumn, index: number) => ({
     id: index,
     name: item.columnName,
     type: item.columnType,
-    entityType: item.entityType,
+    entityType: item.entityType || 'String', // 默认String类型
     isEntityField: true
   }))
 
   const selectedTableName = tables.value.find(t => t.value === selectedTable.value)?.label || ''
-  emit('table-selected', selectedTableName, fields)
+  emit('table-selected', selectedTableName, fields.value)
+}
+
+const fields = ref<any[]>([])
+
+const generateCode = async () => {
+  if (!selectedSource.value || !selectedDB.value || !selectedTable.value || !codePackagePath.value) {
+    alert('请填写完整信息')
+    return
+  }
+
+  try {
+    const columnSettings = fields.value.map((item: any) => ({
+      columnName: item.name,
+      entityType: item.entityType,
+      isEntityField: item.isEntityField
+    }))
+
+    const params: CodeGenerateDTO = {
+      dataSourceId: selectedSource.value,
+      dbName: selectedDB.value,
+      tableName: selectedTable.value,
+      packageName: codePackagePath.value,
+      columnSettingList: columnSettings
+    }
+
+    const response = await generateCodeByConfig(params)
+
+    // 创建下载链接
+    const url = window.URL.createObjectURL(new Blob([response.data]))
+    const link = document.createElement('a')
+    link.href = url
+    link.setAttribute('download', `${selectedTable.value}_code.zip`)
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  } catch (error) {
+    console.error('生成代码失败:', error)
+    alert('生成代码失败')
+  }
 }
 </script>
 
@@ -81,6 +120,9 @@ const fetchTableFields = async () => {
   <div class="path-input">
     <label>要生成的包路径:</label>
     <input v-model="codePackagePath" placeholder="请输入代码包路径" />
+  </div>
+  <div class="action-buttons">
+    <button @click="generateCode" :disabled="!selectedTable">生成代码</button>
   </div>
   <div class="selector-container">
     <div class="selector-item">
@@ -135,6 +177,26 @@ const fetchTableFields = async () => {
   padding: 8px;
   min-width: 300px;
 }
+
+.action-buttons {
+  margin-bottom: 15px;
+  text-align: right;
+}
+
+.action-buttons button {
+  padding: 8px 16px;
+  background-color: #409eff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.action-buttons button:disabled {
+  background-color: #c0c4cc;
+  cursor: not-allowed;
+}
+
 .selector-container {
   display: flex;
   gap: 20px;
