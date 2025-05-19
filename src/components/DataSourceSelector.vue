@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 
 const codePackagePath = ref<string>('')
 import { listDataSource, listDataBase, listTable, listColumns, generateCodeByConfig } from '@/apis/GenCode'
@@ -42,7 +42,18 @@ const fetchDatabases = async () => {
   emit('clear-table')
 }
 
-const emit = defineEmits(['table-selected', 'clear-table'])
+const emit = defineEmits(['table-selected', 'clear-table', 'update:table', 'update:source', 'update:db', 'update:path'])
+
+// 确保选中状态同步
+watch(selectedSource, (newVal) => {
+  emit('update:source', newVal)
+})
+watch(selectedDB, (newVal) => {
+  emit('update:db', newVal)
+})
+watch(selectedTable, (newVal) => {
+  emit('update:table', newVal)
+})
 
 //databaseChange事件
 const fetchTables = async () => {
@@ -64,7 +75,7 @@ const fetchTableFields = async () => {
   if (!selectedTable.value) return
 
   const data = await listColumns(selectedSource.value, selectedDB.value, selectedTable.value);
-  fields.value = data.map((item: TableColumn, index: number) => ({
+  const fields = data.map((item: TableColumn, index: number) => ({
     id: index,
     name: item.columnName,
     type: item.columnType,
@@ -73,56 +84,19 @@ const fetchTableFields = async () => {
   }))
 
   const selectedTableName = tables.value.find(t => t.value === selectedTable.value)?.label || ''
-  emit('table-selected', selectedTableName, fields.value)
+  emit('table-selected', selectedTableName, fields)
 }
 
-const fields = ref<any[]>([])
-
-const generateCode = async () => {
-  if (!selectedSource.value || !selectedDB.value || !selectedTable.value || !codePackagePath.value) {
-    alert('请填写完整信息')
-    return
-  }
-
-  try {
-    const columnSettings = fields.value.map((item: any) => ({
-      columnName: item.name,
-      entityType: item.entityType,
-      isEntityField: item.isEntityField
-    }))
-
-    const params: CodeGenerateDTO = {
-      dataSourceId: selectedSource.value,
-      dbName: selectedDB.value,
-      tableName: selectedTable.value,
-      packageName: codePackagePath.value,
-      columnSettingList: columnSettings
-    }
-
-    const response = await generateCodeByConfig(params)
-
-    // 创建下载链接
-    const url = window.URL.createObjectURL(new Blob([response.data]))
-    const link = document.createElement('a')
-    link.href = url
-    link.setAttribute('download', `${selectedTable.value}_code.zip`)
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-  } catch (error) {
-    console.error('生成代码失败:', error)
-    alert('生成代码失败')
-  }
-}
 </script>
 
 <template>
   <div class="path-input">
     <label>要生成的包路径:</label>
-    <input v-model="codePackagePath" placeholder="请输入包路径eg:com.example.order" />
-  </div>
-  <div class="action-buttons">
-    <button @click="generateCode" :disabled="!selectedTable">生成代码</button>
+      <input
+        v-model="codePackagePath"
+        placeholder="请输入包路径eg:com.example.order"
+        @input="(e) => emit('update:path', (e.target as HTMLInputElement).value)"
+      />
   </div>
   <div class="selector-container">
     <div class="selector-item">
@@ -150,7 +124,10 @@ const generateCode = async () => {
       <select
         v-model="selectedTable"
         :disabled="!selectedDB"
-        @change="fetchTableFields"
+        @change="() => {
+          fetchTableFields()
+          emit('update:table', selectedTable)
+        }"
       >
         <option value="">请选择数据表</option>
         <option v-for="table in tables" :key="table.value" :value="table.value">
@@ -176,25 +153,6 @@ const generateCode = async () => {
 .path-input input {
   padding: 8px;
   min-width: 300px;
-}
-
-.action-buttons {
-  margin-bottom: 15px;
-  text-align: right;
-}
-
-.action-buttons button {
-  padding: 8px 16px;
-  background-color: #409eff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.action-buttons button:disabled {
-  background-color: #c0c4cc;
-  cursor: not-allowed;
 }
 
 .selector-container {
