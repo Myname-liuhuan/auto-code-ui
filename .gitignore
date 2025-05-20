@@ -30,3 +30,5 @@ coverage
 *.tsbuildinfo
 
 .git_disabled
+
+package-lock.json
