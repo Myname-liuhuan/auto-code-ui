@@ -50,9 +50,9 @@ const generateCode = async () => {
     columnSettingList: columnSettings
   }
 
-  generateCodeByConfig(params).then((res: Blob) => {
+  generateCodeByConfig(params).then((response: {data: Blob, headers: any}) => {
     // 检查是不是 JSON 错误信息而非 zip 文件
-    if (res.type === 'application/json') {
+    if (response.data.type === 'application/json') {
         const reader = new FileReader();
         reader.onload = () => {
           try {
@@ -62,11 +62,20 @@ const generateCode = async () => {
             console.error('解析错误信息失败:', e);
           }
         };
-        reader.readAsText(res);
+        reader.readAsText(response.data);
       } else {
+        // 从响应头获取文件名
+        const contentDisposition = response.headers['content-disposition'];
+        let filename = 'generated-code.zip';
+        if (contentDisposition) {
+          const filenameMatch = contentDisposition.match(/filename="(.+)"/);
+          if (filenameMatch && filenameMatch[1]) {
+            filename = filenameMatch[1];
+          }
+        }
         // 正常下载 zip
-        const blob = new Blob([res], { type: 'application/zip' });
-        saveAs(blob, 'generated-code.zip');
+        const blob = new Blob([response.data], { type: 'application/zip' });
+        saveAs(blob, filename);
       }
     })
     .catch((err) => {
