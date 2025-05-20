@@ -44,5 +44,6 @@ export const generateCodeByConfig = (data: CodeGenerateDTO) => {
     method: 'POST',
     data,
     responseType: 'blob', // 设置响应类型为 blob
+    timeout: 60000
   });
 };

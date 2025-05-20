@@ -2,8 +2,8 @@
 import { ref, onMounted, watch } from 'vue'
 
 const codePackagePath = ref<string>('')
-import { listDataSource, listDataBase, listTable, listColumns, generateCodeByConfig } from '@/apis/GenCode'
-import type { DataSourceItem, TableColumn, CodeGenerateDTO } from '@/types/codegen';
+import { listDataSource, listDataBase, listTable, listColumns } from '@/apis/GenCode'
+import type { DataSourceItem, TableColumn } from '@/types/codegen';
 import type { CommonSelectItem } from '@/types/common';
 
 const dataSourceList = ref<DataSourceItem[]>([]);

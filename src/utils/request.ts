@@ -30,17 +30,39 @@ instance.interceptors.request.use(
 
 // 响应拦截器
 instance.interceptors.response.use(
-  (response: AxiosResponse) => {
+  async (response: AxiosResponse) => {
+    const contentType = response.headers['content-type'];
+
+    // ✅ 如果是 blob 类型（下载文件）
+    if (contentType && contentType.includes('application/octet-stream')) {
+      return response.data;
+    }
+
+    // ✅ 如果是 json 格式
     const res = response.data;
     if (res.code !== 200) {
       return Promise.reject(res.message || 'Error');
     }
     return res.data;
   },
-  error => {
-    return Promise.reject(error);
+  async error => {
+    // ❌ 捕获 blob 类型的错误响应，解析成 JSON 错误信息
+    const isBlob = error.response?.data instanceof Blob && error.response?.data.type === 'application/json';
+
+    if (isBlob) {
+      try {
+        const text = await error.response.data.text();
+        const json = JSON.parse(text);
+        return Promise.reject(json.message || '下载失败');
+      } catch (e) {
+        return Promise.reject('未知 blob 错误');
+      }
+    }
+
+    return Promise.reject(error.message || '请求失败');
   }
 );
+
 
 // 带泛型的封装方法
 interface RequestOptions extends AxiosRequestConfig {

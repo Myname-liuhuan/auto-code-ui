@@ -3,6 +3,8 @@ import { ref } from 'vue'
 import DataSourceSelector from '@/components/DataSourceSelector.vue'
 import TableFields from '@/components/TableFields.vue'
 import { generateCodeByConfig } from '@/apis/GenCode'
+import { saveAs } from 'file-saver';
+
 
 const fields = ref<any[]>([])
 const selectedTableName = ref('')
@@ -33,34 +35,44 @@ const generateCode = async () => {
     return
   }
 
-  try {
-    const columnSettings = fields.value.map((item: any) => ({
-      columnName: item.name,
-      entityType: item.entityType,
-      isEntityField: item.isEntityField
-    }))
 
-    const params = {
-      dataSourceId: selectedSource.value,
-      dbName: selectedDB.value,
-      tableName: selectedTable.value,
-      packageName: codePackagePath.value,
-      columnSettingList: columnSettings
-    }
+  const columnSettings = fields.value.map((item: any) => ({
+    columnName: item.name,
+    entityType: item.entityType,
+    isEntityField: item.isEntityField
+  }))
 
-    const response = await generateCodeByConfig(params)
-
-    const url = window.URL.createObjectURL(new Blob([response.data]))
-    const link = document.createElement('a')
-    link.href = url
-    link.setAttribute('download', `${selectedTable.value}_code.zip`)
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-  } catch (error) {
-    console.error('生成代码失败:', error)
-    alert('生成代码失败')
+  const params = {
+    dataSourceId: selectedSource.value,
+    dbName: selectedDB.value,
+    tableName: selectedTable.value,
+    packageName: codePackagePath.value,
+    columnSettingList: columnSettings
   }
+
+  generateCodeByConfig(params).then((res: Blob) => {
+    // 检查是不是 JSON 错误信息而非 zip 文件
+    if (res.type === 'application/json') {
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            const error = JSON.parse(reader.result as string);
+            console.error('后端错误信息:', error);
+          } catch (e) {
+            console.error('解析错误信息失败:', e);
+          }
+        };
+        reader.readAsText(res);
+      } else {
+        // 正常下载 zip
+        const blob = new Blob([res], { type: 'application/zip' });
+        saveAs(blob, 'generated-code.zip');
+      }
+    })
+    .catch((err) => {
+      console.error('请求失败:', err);
+      console.error(err.response);
+    });
 }
 
 const handleClearTable = () => {
