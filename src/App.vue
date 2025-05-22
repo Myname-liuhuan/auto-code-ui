@@ -101,7 +101,7 @@ const handleClearTable = () => {
       v-model:table="selectedTable"
       v-model:path="codePackagePath"
     />
-    <TableFields :fields="fields" />
+    <TableFields v-model="fields" />
     <div class="action-buttons">
       <button @click="generateCode" :disabled="!selectedTable">生成代码</button>
     </div>

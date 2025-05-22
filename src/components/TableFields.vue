@@ -9,17 +9,17 @@ interface Field {
 }
 
 const props = defineProps<{
-  fields: Field[]
+  modelValue: Field[]
 }>()
 
-const emit = defineEmits(['update:fields'])
+const emit = defineEmits(['update:modelValue'])
 
 const entityTypes = ['String', 'Number', 'Boolean', 'Date', 'Object']
 
 const updateField = (index: number, field: Partial<Field>) => {
-  const updatedFields = [...props.fields]
+  const updatedFields = [...props.modelValue]
   updatedFields[index] = { ...updatedFields[index], ...field }
-  emit('update:fields', updatedFields)
+  emit('update:modelValue', updatedFields)
 }
 </script>
 
@@ -35,8 +35,8 @@ const updateField = (index: number, field: Partial<Field>) => {
           <th>是否实体类字段</th>
         </tr>
       </thead>
-      <tbody v-if="props.fields && props.fields.length > 0">
-        <tr v-for="(field, index) in props.fields" :key="field.id">
+      <tbody v-if="props.modelValue && props.modelValue.length > 0">
+        <tr v-for="(field, index) in props.modelValue" :key="field.id">
           <td>{{ index + 1 }}</td>
           <td>{{ field.name }}</td>
           <td>{{ field.type }}</td>
