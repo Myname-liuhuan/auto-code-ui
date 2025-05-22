@@ -40,7 +40,22 @@ const updateField = (index: number, field: Partial<Field>) => {
           <td>{{ index + 1 }}</td>
           <td>{{ field.name }}</td>
           <td>{{ field.type }}</td>
-          <td>{{ field.entityType }}</td>
+          <td>
+            <select
+              :value="field.entityType"
+              @change="(e: Event) => updateField(index, { entityType: (e.target as HTMLSelectElement).value })"
+            >
+              <option value="Boolean">Boolean</option>
+              <option value="Byte">Byte</option>
+              <option value="Character">Character</option>
+              <option value="String">String</option>
+              <option value="Short">Short</option>
+              <option value="Integer">Integer</option>
+              <option value="Long">Long</option>
+              <option value="Float">Float</option>
+              <option value="Double">Double</option>
+            </select>
+          </td>
           <td>
             <select
               :value="field.isEntityField"
