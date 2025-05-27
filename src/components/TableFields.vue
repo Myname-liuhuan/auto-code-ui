@@ -54,6 +54,8 @@ const updateField = (index: number, field: Partial<Field>) => {
               <option value="Long">Long</option>
               <option value="Float">Float</option>
               <option value="Double">Double</option>
+              <option value="LocalDateTime">LocalDateTime</option>
+              <option value="LocalDate">LocalDate</option>
             </select>
           </td>
           <td>
